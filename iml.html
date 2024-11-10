@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IML MANUAL</title>
+    <style>
+        h1 {
+            text-align: center;
+        }
+        h2 {
+            font-size: 1.5em; /* Medium size for experiment name */
+            font-weight: bold;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <h1>IML MANUAL</h1>
+    </center>
+
+    <h2>Exp-1: To Implement Linear Regression using Python</h2>
+    <pre>
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([0,1,2,3,4,5,6,7,8,9,10])
+y = np.array([10,9,8,7,6,5,4,3,2,1,0])
+
+m = (((np.mean(x) * np.mean(y)) - np.mean(x * y)) /
+     ((np.mean(x) * np.mean(x)) - np.mean(x * x)))
+b = np.mean(y) - m * np.mean(x)
+
+plt.plot(x, y, 'o')
+plt.plot(x, m * x + b)
+plt.show()
+    </pre>
+    <h2>exp:-2 Implement the Bayes Classifier using python To find the probability that a student is absent given that today is Friday.</h2>
+    <pre>
+        probAbsentFriday=0.0
+        probFriday=0.2
+        bayesResult=(probAbsentFriday/probFriday)
+        print(bayesResult * 100) 
+    </pre>
+    <h2>exp-3:- to implement naive bayes theorom to classify rthe english text</h2>
+    <pre>
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score
+msg = pd.read_csv('/content/document.csv', names=['message', 'label'])
+print("Total Instances of Dataset: ", msg.shape[0])
+msg['labelnum'] = msg.label.map({'pos': 1, 'neg': 0})
+X = msg.message
+y = msg.labelnum
+Xtrain, Xtest, ytrain, ytest = train_test_split(X, y)
+count_v = CountVectorizer()
+Xtrain_dm = count_v.fit_transform(Xtrain)
+Xtest_dm = count_v.transform(Xtest)
+df = pd.DataFrame(Xtrain_dm.toarray(),columns=count_v.get_feature_names_out())
+clf = MultinomialNB()
+clf.fit(Xtrain_dm, ytrain)
+pred = clf.predict(Xtest_dm)
+print('Accuracy Metrics:')
+print('Accuracy: ', accuracy_score(ytest, pred))
+print('Recall: ', recall_score(ytest, pred))
+print('Precision: ', precision_score(ytest, pred))
+print('Confusion Matrix: \n', confusion_matrix(ytest, pred))
+    </pre>
+    <pre>DOCUMENT.CSV
+        I love this sandwich    pos
+        This is an amazingplace	pos
+        I feel very good about these beers	pos
+        This is my best work	pos
+        What an awesome view	pos
+        I do not like this restaurant	neg
+        I am tired of this stuff	neg
+        I can't deal with this	neg
+        Heis my sworn enemy	neg
+        My boss is horrible	neg
+        This is an awesome place	pos
+        I do not like he taste of this juice	neg
+        I love to dance	pos
+        I am sick and tired of this place	neg
+        What a great holiday	pos
+        That is a bad locality to stay	neg
+        We will have good fun tomorrow	pos
+        I went to my enemy's house today	neg
+    </pre>
+    <h2>exp-4:-implement the decision tree algorithm</h2>
+    <pre>
+import pandas
+from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier
+import matplotlib.pyplot as plt
+df=pandas.read_csv('/content/HEM.CSV')
+d={'UK':0,'USA':1,'N':2}
+df['Nationality']=df['Nationality'].map(d)
+d={'YES':1,'NO':0}
+df['Go']=df['Go'].map(d)
+features=['Age','Experience','Rank','Nationality']
+X=df[features]
+Y=df['Go']
+dtree=DecisionTreeClassifier()
+dtree=dtree.fit(X,Y)
+fig=plt.figure(figsize=(15,20))
+fig=tree.plot_tree(dtree,feature_names=features)
+df.head()
+    </pre>
+    <pre>
+        <b>HEM.CSV</b>
+        Age	Experience	Rank	Nationality	Go
+        36	10	9	UK	NO
+        42	12	4	USA	NO
+        23	4	6	N	NO
+        52	4	4	USA	NO
+        43	21	8	USA	YES
+        44	14	5	UK	NO
+        66	3	7	N	YES
+        35	14	9	UK	YES
+        52	13	7	N	YES
+        35	5	9	N	YES
+        24	3	5	USA	NO
+        18	3	7	UK	YES
+        45	9	9	UK	YES
+    </pre>
+    <h2>exp-5:-implement the back propagation algorithm</h2>
+    <pre>
+import numpy as np
+X = np.array(([2, 9], [1, 5], [3, 6]), dtype=float)
+y = np.array(([92], [86], [89]), dtype=float)
+X = X/np.amax(X,axis=0)
+y = y/100
+
+
+def sigmoid (x):
+   return 1/(1 + np.exp(-x))
+
+
+def derivatives_sigmoid(x):
+   return x * (1 - x)
+
+
+epoch=7000
+lr=0.1
+inputlayer_neurons = 2
+hiddenlayer_neurons = 3
+output_neurons = 1
+
+
+wh=np.random.uniform(size=(inputlayer_neurons,hiddenlayer_neurons))
+bh=np.random.uniform(size=(1,hiddenlayer_neurons))
+wout=np.random.uniform(size=(hiddenlayer_neurons,output_neurons))
+bout=np.random.uniform(size=(1,output_neurons))
+for i in range(epoch):
+
+
+   hinp1=np.dot(X,wh)
+   hinp=hinp1 + bh
+   hlayer_act = sigmoid(hinp)
+   outinp1=np.dot(hlayer_act,wout)
+   outinp= outinp1+ bout
+   output = sigmoid(outinp)
+
+
+   EO = y-output
+   outgrad = derivatives_sigmoid(output)
+   d_output = EO* outgrad
+   EH = d_output.dot(wout.T)
+   hiddengrad = derivatives_sigmoid(hlayer_act)
+   d_hiddenlayer = EH * hiddengrad
+   wout += hlayer_act.T.dot(d_output) *lr
+   wh += X.T.dot(d_hiddenlayer) *lr
+
+print("Input: \n" + str(X))
+print("Actual Output: \n" + str(y))
+print("Predicted Output: \n",output)
+
+    </pre>
+    <h2>exp-6:classification using multilayer perception</h2>
+    <pre>
+        import numpy as np
+        import pandas as pd
+        import os
+        import copy
+        import time
+        import torch
+        import torch.nn as nn
+        import cv2
+        import matplotlib.pyplot as plt
+        import albumentations as A
+        !pip install torch-optimizer
+        import torch_optimizer as optim
+        !pip install res_mlp_pytorch
+        from res_mlp_pytorch import ResMLP  # Assuming ResMLP is defined in this module
+        from PIL import Image
+        from albumentations.pytorch import ToTensorV2
+        from torch.utils.data import Dataset, DataLoader
+        
+        class FoodDataset(Dataset):
+            def __init__(self, data_type=None, transforms=None):
+                self.path = f'/content/drive/MyDrive/document.csv{data_type}/'
+                self.images_name = os.listdir(self.path)
+                self.transforms = transforms
+        
+            def __len__(self):
+                return len(self.images_name)
+        
+            def __getitem__(self, idx):
+                data = self.images_name[idx]
+                label = int(data.split('_')[0])
+                label = torch.tensor(label)
+        
+                image = cv2.imread(self.path + data)
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        
+                if self.transforms:
+                    aug = self.transforms(image=image)
+                    image = aug['image']
+        
+                return image, label
+        
+        # Define data transformations and datasets
+        train_data = FoodDataset(
+            'training',
+            A.Compose([
+                A.RandomResizedCrop(256, 256),
+                A.HorizontalFlip(),
+                A.Normalize(),
+                ToTensorV2()
+            ])
+        )
+        
+        val_data = FoodDataset(
+            'validation',
+            A.Compose([
+                A.Resize(384, 384),
+                A.CenterCrop(256, 256),
+                A.Normalize(),
+                ToTensorV2(),
+            ])
+        )
+        
+        test_data = FoodDataset(
+            'test',
+            A.Compose([
+                A.Resize(384, 384),
+                A.CenterCrop(256, 256),
+                A.Normalize(),
+                ToTensorV2(),
+            ])
+        )
+        
+        # Data loaders
+        dataloaders = {
+            'train': DataLoader(train_data, batch_size=32, shuffle=True, num_workers=4),
+            'val': DataLoader(val_data, batch_size=32, shuffle=True, num_workers=4),
+            'test': DataLoader(test_data, batch_size=32, shuffle=True, num_workers=4)
+        }
+        
+        dataset_sizes = {
+            'train': len(train_data),
+            'val': len(val_data),
+            'test': len(test_data)
+        }
+        
+        # Training function
+        def train_model(model, criterion, optimizer, epochs=1):
+            since = time.time()
+        
+            best_model_wts = copy.deepcopy(model.state_dict())
+            best_loss = float('inf')
+            best_acc = 0.0
+        
+            for ep in range(epochs):
+                print(f"Epoch {ep}/{epochs-1}")
+                print("-" * 10)
+        
+                for phase in ['train', 'val']:
+                    if phase == 'train':
+                        model.train()
+                    else:
+                        model.eval()
+        
+                    running_loss = 0.0
+                    running_corrects = 0
+        
+                    for images, labels in dataloaders[phase]:
+                        images = images.to(device)
+                        labels = labels.to(device)
+        
+                        optimizer.zero_grad()
+        
+                        with torch.set_grad_enabled(phase == 'train'):
+                            outputs = model(images)
+                            _, preds = torch.max(outputs, 1)
+                            loss = criterion(outputs, labels)
+        
+                            if phase == 'train':
+                                loss.backward()
+                                optimizer.step()
+        
+                        running_loss += loss.item() * images.size(0)
+                        running_corrects += torch.sum(preds == labels.data)
+        
+                    epoch_loss = running_loss / dataset_sizes[phase]
+                    epoch_acc = running_corrects.double() / dataset_sizes[phase]
+        
+                    print(f"{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}")
+        
+                    if phase == 'val' and epoch_loss < best_loss:
+                        best_loss = epoch_loss
+                        best_acc = epoch_acc
+                        best_model_wts = copy.deepcopy(model.state_dict())
+        
+                print()
+        
+            time_elapsed = time.time() - since
+            print(f'Training complete in {time_elapsed // 60}m {time_elapsed % 60}s')
+            print(f'Best val loss: {best_loss:.4f}')
+            print(f'Best val acc: {best_acc:.4f}')
+        
+            model.load_state_dict(best_model_wts)
+            return model
+        
+        # Train the model
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        model = ResMLP(image_size=256, patch_size=16, dim=512, depth=12, num_classes=2)
+        model = model.to(device)
+        
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Lamb(model.parameters(), lr=0.005, weight_decay=0.2)
+        
+        best_model = train_model(model, criterion, optimizer, epochs=20)
+         
+    </pre>
+    <h2>exp-7:-naive bayesian classifier</h2>
+    <pre>
+import pandas as pd
+from sklearn import tree
+from sklearn.preprocessing import LabelEncoder
+from sklearn.naive_bayes import GaussianNB
+data = pd.read_csv('/content/drive/MyDrive/tennisdata.csv')
+print("The first 5 values of data is :\n",data.head())
+X = data.iloc[:,:-1]
+print("\nThe First 5 values of train data is\n",X.head())
+y = data.iloc[:,-1]
+print("\nThe first 5 values of Train output is\n",y.head())
+le_outlook = LabelEncoder()
+X.Outlook = le_outlook.fit_transform(X.outlook)
+le_Temperature = LabelEncoder()
+X.Temperature = le_Temperature.fit_transform(X.temperature)
+le_Humidity = LabelEncoder()
+X.Humidity = le_Humidity.fit_transform(X.humidity)
+le_Windy = LabelEncoder()
+X.Windy = le_Windy.fit_transform(X.windy)
+print("\nNow the Train data is :\n",X.head())
+le_PlayTennis = LabelEncoder()
+y = le_PlayTennis.fit_transform(y)
+print("\nNow the Train output is\n",y)
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.20)
+classifier = GaussianNB()
+classifier.fit(X_train,y_train)
+from sklearn.metrics import accuracy_score
+print("Accuracy is:",accuracy_score(classifier.predict(X_test),y_test))
+/content/drive/MyDrive/tennisdata.csv
+    </pre>
+    <h2>exp:-8 naive bayesian classifier using built-in functions</h2>
+    <pre>
+import pandas as pd
+msg = pd.read_csv(r"/content/drive/MyDrive/document.csv",
+names=['message', 'label'])
+print("Total Instances of Dataset: ", msg.shape[0])
+msg['labelnum'] = msg.label.map({'pos': 1, 'neg': 0})
+X = msg.message
+y = msg.labelnum
+from sklearn.model_selection import train_test_split
+Xtrain, Xtest, ytrain, ytest = train_test_split(X, y)
+from sklearn.feature_extraction.text import CountVectorizer
+count_v = CountVectorizer()
+Xtrain_dm = count_v.fit_transform(Xtrain)
+Xtest_dm = count_v.transform(Xtest)
+df = pd.DataFrame(Xtrain_dm.toarray(),columns=count_v.get_feature_names_out())
+print(df[0:5])
+from sklearn.naive_bayes import MultinomialNB
+clf = MultinomialNB()
+clf.fit(Xtrain_dm, ytrain)
+pred = clf.predict(Xtest_dm)
+for doc, p in zip(Xtrain, pred):
+                                    p = 'pos' if p == 1 else 'neg'
+print("%s -> %s" % (doc, p))
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score
+print('Accuracy Metrics: \n')
+print('Accuracy: ', accuracy_score(ytest, pred))
+print('Recall: ', recall_score(ytest, pred))
+print('Precision: ', precision_score(ytest, pred))
+print('Confusion Matrix: \n', confusion_matrix(ytest, pred))
+    </pre>
+    <pre>
+        TENNIS DATA.CSV
+        outlook	temperature	humidity	windy	playtennis
+        Sunny	Hot	High	FALSE	No
+        Sunny	Hot	High	TRUE	No
+        Overcast	Hot	High	FALSE	Yes
+        Rainy	Mild	High	FALSE	Yes
+        Rainy	Cool	Normal	FALSE	Yes
+        Rainy	Cool	Normal	TRUE	No
+    </pre>
+    <h2>exp:-9 bayesian classifier for heart disease diagnosis</h2>
+    <pre>
+        
+import pandas as pd
+from pgmpy.estimators import MaximumLikelihoodEstimator
+from pgmpy.models import BayesianModel
+from pgmpy.inference import VariableElimination
+data = pd.read_csv(r"/content/drive/MyDrive/exp9.csv")
+heart_disease = pd.DataFrame(data)
+print(heart_disease)
+model = BayesianModel([
+('age', 'Lifestyle'),
+('Gender', 'Lifestyle'),
+('Family', 'heartdisease'),
+('diet', 'cholestrol'),
+('Lifestyle', 'diet'),
+('cholestrol', 'heartdisease'),
+('diet', 'cholestrol')
+])
+model.fit(heart_disease, estimator=MaximumLikelihoodEstimator)
+HeartDisease_infer = VariableElimination(model)
+print('For Age enter SuperSeniorCitizen:0, SeniorCitizen:1, MiddleAged:2, Youth:3,Teen:4')
+print('For Gender enter Male:0, Female:1')
+print('For Family History enter Yes:1, No:0')
+print('For Diet enter High:0, Medium:1')
+print('for LifeStyle enter Athlete:0, Active:1, Moderate:2, Sedentary:3')
+print('for Cholesterol enter High:0, BorderLine:1, Normal:2')
+q = HeartDisease_infer.query(variables=['heartdisease'], evidence={
+'age': int(input('Enter Age: ')),
+'Gender': int(input('Enter Gender: ')),
+'Family': int(input('Enter Family History: ')),
+'diet': int(input('Enter Diet: ')),
+'Lifestyle': int(input('Enter Lifestyle: ')),
+'cholestrol': int(input('Enter Cholestrol: '))
+})
+print(q)
+    </pre>
+    <pre>
+        exp9.csv
+        age	Gender	Family	diet	Lifestyle	cholestrol	heartdisease
+        0	0	1	1	3	0	1
+        0	1	1	1	3	0	1
+        1	0	0	0	2	1	1
+        4	0	1	1	3	2	0
+        3	1	1	0	0	2	0
+        2	0	1	1	1	0	1
+        4	0	1	0	2	0	1
+        0	0	1	1	3	0	1
+        3	1	1	0	0	2	0
+        1	1	0	0	0	2	1
+        4	1	0	1	2	0	1
+        4	0	1	1	3	2	0
+        2	1	0	0	0	0	1
+        3	1	1	0	0	1	0
+        0	0	1	0	0	2	1
+        1	1	0	1	2	1	1
+        3	1	1	1	0	1	0
+        4	0	1	1	3	2	0
+    </pre>
+    <h2>EXP:-10 non parametric locally weighted regression algorithm</h2>
+    <pre>
+from numpy import *
+import operator
+from os import listdir
+import matplotlib
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy.linalg
+from scipy.stats.stats import pearsonr
+def kernel(point,xmat, k):
+  m,n = shape(xmat)
+  weights = mat(eye((m)))
+  for j in range(m):
+    diff = point - X[j]
+    weights[j,j] = exp(diff*diff.T/(-2.0*k**2))
+    return weights
+def localWeight(point,xmat,ymat,k):
+  wei = kernel(point,xmat,k)
+  W = (X.T*(wei*X)).I*(X.T*(wei*ymat.T))
+  return W
+def localWeightRegression(xmat,ymat,k):
+  m,n = shape(xmat)
+  ypred = zeros(m)
+  for i in range(m):
+   ypred[i] = xmat[i]*localWeight(xmat[i],xmat,ymat,k)
+  return ypred
+# load data points
+data = pd.read_csv(r"/content/drive/MyDrive/graph.csv")
+bill = array(data.total_bill)
+tip = array(data.tip)
+#preparing and add 1 in bill
+mbill = mat(bill)
+mtip = mat(tip)
+m= shape(mbill)[1]
+one = mat(ones(m))
+X= hstack((one.T,mbill.T))
+#set k here
+ypred = localWeightRegression(X,mtip,0.2)
+SortIndex = X[:,1].argsort(0)
+xsort = X[SortIndex][:,0]
+fig = plt.figure()
+ax = fig.add_subplot(1,1,1)
+ax.scatter(bill,tip, color='green')
+ax.plot(xsort[:,1],ypred[SortIndex], color = 'red', linewidth=5)
+plt.xlabel('Total bill')
+plt.ylabel('Tip')
+plt.show();
+
+    </pre>
+    <pre>
+        graph.csv 
+        total_bill	tip	sex	smoker	day	time	size
+        16.99	1.01	Female	No	Sun	Dinner	2
+        10.34	1.66	Male	No	Sun	Dinner	3
+        21.01	3.5	Male	No	Sun	Dinner	3
+        23.68	3.31	Male	No	Sun	Dinner	2
+        24.59	3.61	Female	No	Sun	Dinner	4
+        25.29	4.71	Male	No	Sun	Dinner	4
+        8.77	2	Male	No	Sun	Dinner	2
+        26.88	3.12	Male	No	Sun	Dinner	4
+        15.04	1.96	Male	No	Sun	Dinner	2
+        14.78	3.23	Male	No	Sun	Dinner	2
+        10.27	1.71	Male	No	Sun	Dinner	2
+        35.26	5	Female	No	Sun	Dinner	4
+        15.42	1.57	Male	No	Sun	Dinner	2
+        18.43	3	Male	No	Sun	Dinner	4
+        14.83	3.02	Female	No	Sun	Dinner	2
+        21.58	3.92	Male	No	Sun	Dinner	2
+        10.33	1.67	Female	No	Sun	Dinner	3
+        16.29	3.71	Male	No	Sun	Dinner	3
+        16.97	3.5	Female	No	Sun	Dinner	3
+        20.65	3.35	Male	No	Sat	Dinner	3
+        17.92	4.08	Male	No	Sat	Dinner	2
+        20.29	2.75	Female	No	Sat	Dinner	2
+        15.77	2.23	Female	No	Sat	Dinner	2
+        39.42	7.58	Male	No	Sat	Dinner	4
+        19.82	3.18	Male	No	Sat	Dinner	2
+        17.81	2.34	Male	No	Sat	Dinner	4
+        13.37	2	Male	No	Sat	Dinner	2
+        12.69	2	Male	No	Sat	Dinner	2
+        21.7	4.3	Male	No	Sat	Dinner	2
+        19.65	3	Female	No	Sat	Dinner	2
+        9.55	1.45	Male	No	Sat	Dinner	2
+        18.35	2.5	Male	No	Sat	Dinner	4
+        15.06	3	Female	No	Sat	Dinner	2
+        20.69	2.45	Female	No	Sat	Dinner	4
+        17.78	3.27	Male	No	Sat	Dinner	2
+        24.06	3.6	Male	No	Sat	Dinner	3
+        16.31	2	Male	No	Sat	Dinner	3
+        16.93	3.07	Female	No	Sat	Dinner	3
+        18.69	2.31	Male	No	Sat	Dinner	3
+        31.27	5	Male	No	Sat	Dinner	3
+        16.04	2.24	Male	No	Sat	Dinner	3
+        17.46	2.54	Male	No	Sun	Dinner	2
+        13.94	3.06	Male	No	Sun	Dinner	2
+        9.68	1.32	Male	No	Sun	Dinner	2
+        30.4	5.6	Male	No	Sun	Dinner	4
+        18.29	3	Male	No	Sun	Dinner	2
+        22.23	5	Male	No	Sun	Dinner	2
+        32.4	6	Male	No	Sun	Dinner	4
+        28.55	2.05	Male	No	Sun	Dinner	3
+        18.04	3	Male	No	Sun	Dinner	2
+        12.54	2.5	Male	No	Sun	Dinner	2
+        10.29	2.6	Female	No	Sun	Dinner	2
+        34.81	5.2	Female	No	Sun	Dinner	4
+        9.94	1.56	Male	No	Sun	Dinner	2
+        25.56	4.34	Male	No	Sun	Dinner	4
+        19.49	3.51	Male	No	Sun	Dinner	2
+        38.01	3	Male	Yes	Sat	Dinner	4
+        26.41	1.5	Female	No	Sat	Dinner	2
+        11.24	1.76	Male	Yes	Sat	Dinner	2
+        48.27	6.73	Male	No	Sat	Dinner	4
+        20.29	3.21	Male	Yes	Sat	Dinner	2
+        13.81	2	Male	Yes	Sat	Dinner	2
+        11.02	1.98	Male	Yes	Sat	Dinner	2
+        18.29	3.76	Male	Yes	Sat	Dinner	4
+        17.59	2.64	Male	No	Sat	Dinner	3
+        20.08	3.15	Male	No	Sat	Dinner	3
+        16.45	2.47	Female	No	Sat	Dinner	2
+        3.07	1	Female	Yes	Sat	Dinner	1
+        20.23	2.01	Male	No	Sat	Dinner	2
+        15.01	2.09	Male	Yes	Sat	Dinner	2
+        12.02	1.97	Male	No	Sat	Dinner	2
+        17.07	3	Female	No	Sat	Dinner	3
+        26.86	3.14	Female	Yes	Sat	Dinner	2
+    </pre>
+</body>
+</html>
